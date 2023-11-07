@@ -9,7 +9,7 @@ const int sensorPin = 4;
 Adafruit_SSD1306 OLED(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 float sensorValue = 0;
 #define SENSOR_READ_TIME 1000
-
+#define F_OFFSET 10
 const unsigned char arduino_icon [] PROGMEM = {
   // 'arduino-icon', 128x64px
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -106,8 +106,11 @@ void loop() {
 
    // put your main code here, to run repeatedly:
   OLED.println("MOISTURE LEVEL: ");
+  OLED.display();
   // prints "MOISTURE LEVEL: "
   sensorValue = analogRead(sensorPin);
+
+  OLED.setCursor(10, 10+F_OFFSET);  
   // sets "sensorValue" to input value from A0
   OLED.println(sensorValue);
   OLED.display();
