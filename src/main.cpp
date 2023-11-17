@@ -8,7 +8,7 @@
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 const int relaypin = 5;
-const int sensorpin = 0;
+const int sensorpin = A0;
 int sensorval =0;
 #define SOIL_READ_TIME 1000
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
@@ -30,33 +30,36 @@ if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
   delay(500);
   display.setTextSize(2);
   display.setTextColor(WHITE);
+//turns on relay, in turn turning on pump
+delay(500);
 }
 void pump(){
+	delay(REFRESH_TIME/2);
    display.setCursor(0,10);	
-    digitalWrite(relaypin, HIGH);
+   display.clearDisplay(); 
+   digitalWrite(relaypin, LOW);
 display.print("H20 PUMP \n SIGNL SENT");
+display.display();
+delay(REFRESH_TIME);
 }
 void donothing(int val)
  {
+	 delay(REFRESH_TIME/2);
+ display.clearDisplay();
  display.setCursor(0,10);
-  const char* msg = "HAPPY PLANT \n HAPPINESS LEVEL : \n"+ (val%750 + '0');
-  display.print(msg);
-  digitalWrite(relaypin, LOW);
+  display.print("HAPPY PLANT \n HAPPINESS LEVEL : \n"+ (val + '0'));
+  display.display();
+  digitalWrite(relaypin, HIGH);
+  delay(REFRESH_TIME);
   return;
 }
 void loop() {
       	// put your main code here, to run repeatedly:
 	display.setCursor(0,10);
-	display.clearDisplay();
 	display.setTextSize(2);
 	display.print("MOISTURE   LEVEL: \n    ");
 	sensorval = analogRead(sensorpin);
-	display.println(sensorval);
+	display.print(sensorval);
 	display.display();
-	delay(REFRESH_TIME);
-	display.clearDisplay();
-	(sensorval > 750)?donothing(sensorval):pump();
-	display.display();
-	delay(SOIL_READ_TIME);
-	delay(REFRESH_TIME);
+	(sensorval < 750)?pump():donothing(sensorval);
 }
