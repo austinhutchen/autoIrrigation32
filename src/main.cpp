@@ -10,10 +10,9 @@
 const int relaypin = 5;
 const int sensorpin = A0;
 int sensorval =0;
-#define SOIL_READ_TIME 1000
+#define SOIL_READ_TIME 4000
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 // put function declarations here:
-int myFunction(int, int);
 
 void setup() {
   // put your setup code here, to run once:
