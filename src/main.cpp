@@ -4,7 +4,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #define OLED_RESET -1
-#define REFRESH_TIME 1000
+#define REFRESH_TIME 1200
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 const int relaypin = 5;
@@ -34,32 +34,41 @@ if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
 delay(500);
 }
 void pump(){
+	display.setTextSize(2);
 	delay(REFRESH_TIME/2);
-   display.setCursor(0,10);	
-   display.clearDisplay(); 
+   display.setCursor(0,10);
+   display.clearDisplay();
    digitalWrite(relaypin, LOW);
-display.print("H20 PUMP \n SIGNL SENT");
+display.print("H20 PUMP \nSIGNL SENT");
 display.display();
 delay(REFRESH_TIME);
+display.clearDisplay();
 }
 void donothing(int val)
  {
 	 delay(REFRESH_TIME/2);
  display.clearDisplay();
- display.setCursor(0,10);
-  display.print("HAPPY PLANT \n HAPPINESS LEVEL : \n"+ (val + '0'));
+ display.setCursor(0,5);
+ display.setTextSize(2);
+  display.print("PLANT :) \ MOIST: ");
+  display.print(val+'0');
   display.display();
   digitalWrite(relaypin, HIGH);
   delay(REFRESH_TIME);
-  return;
+  display.clearDisplay();
 }
 void loop() {
       	// put your main code here, to run repeatedly:
-	display.setCursor(0,10);
-	display.setTextSize(2);
-	display.print("MOISTURE   LEVEL: \n    ");
-	sensorval = analogRead(sensorpin);
-	display.print(sensorval);
-	display.display();
-	(sensorval < 750)?pump():donothing(sensorval);
+	while(true){
+
+display.setCursor(0,10);
+        display.setTextSize(2);
+        display.print("MOISTURE LEVEL: \n");
+        sensorval = analogRead(sensorpin);
+        display.print(sensorval);
+        display.display();
+        (sensorval < 600)?pump():donothing(sensorval);
+
+
+	}
 }
