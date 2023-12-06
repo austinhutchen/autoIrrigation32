@@ -1,73 +1,54 @@
-#include <Arduino.h>
-#include <Wire.h>
-#include <SPI.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#define OLED_RESET -1
-#define REFRESH_TIME 1200
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-const int relaypin = 5;
-const int sensorpin = A0;
-int sensorval =0;
-#define SOIL_READ_TIME 4000
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-// put function declarations here:
+ // TECHATRONIC.COM
+  // SimpleDHT LIBRARY LINK
+  // https://github.com/winlinvip/SimpleDHT
+  // Library SPI.h
+  // https://github.com/PaulStoffregen/SPI
+  // Library Adafruit_GFX.h
+  // https://github.com/adafruit/Adafruit-GFX-Library
+  // Library Adafruit_SSD1306.h
+  // https://github.com/adafruit/Adafruit_SSD1306
+ #include <SPI.h>
+ #include <Wire.h>
+#include "SevSeg.h"
+SevSeg sevseg;
+ byte numDigits = 4;
+  byte digitPins[] = {10, 11, 12, 13};
+  byte segmentPins[] = {9, 2, 3, 5, 6, 8, 7, 4};
 
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;);
-}
-
-  delay(2000);
-  display.clearDisplay();
-  pinMode(relaypin, OUTPUT);
-  pinMode(sensorpin, INPUT);
-  delay(500);
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-//turns on relay, in turn turning on pump
-delay(500);
-}
-void pump(){
-	display.setTextSize(2);
-	delay(REFRESH_TIME/2);
-   display.setCursor(0,10);
-   display.clearDisplay();
-   digitalWrite(relaypin, LOW);
-display.print("H20 PUMP \nSIGNL SENT");
-display.display();
-delay(REFRESH_TIME);
-display.clearDisplay();
-}
-void donothing(int val)
+  bool resistorsOnSegments = true;
+  bool updateWithDelaysIn = true;
+  byte hardwareConfig = COMMON_CATHODE;
+  sevseg.begin(hardwareConfig, numDigits, digitPins, segmentPins, resistorsOnSegments);
+  sevseg.setBrightness(90);
+ #include <SimpleDHT.h>
+ //   for DHT11,
+ //   VCC: 5V or 3V
+ //   GND: GND
+ //   DATA: 2
+ int pinDHT11 = 3;
+ SimpleDHT11 dht11(pinDHT11);
+ #define I2C_SEGMENT_DISP0 7
+ #define DHT_READ_TIME 1000
+ void setup ()
  {
-	 delay(REFRESH_TIME/2);
- display.clearDisplay();
- display.setCursor(0,5);
- display.setTextSize(2);
-  display.print("PLANT :) \ MOIST: ");
-  display.print(val+'0');
-  display.display();
-  digitalWrite(relaypin, HIGH);
-  delay(REFRESH_TIME);
-  display.clearDisplay();
-}
-void loop() {
-      	// put your main code here, to run repeatedly:
-	while(true){
-
-display.setCursor(0,10);
-        display.setTextSize(2);
-        display.print("MOISTURE LEVEL: \n");
-        sensorval = analogRead(sensorpin);
-        display.print(sensorval);
-        display.display();
-        (sensorval < 600)?pump():donothing(sensorval);
-
-
-	}
-}
+   Serial.begin(9600);
+   Serial.println("TEMPERATURE AND HUMIDITY");
+    pinMode(I2C_SEGMENT_DISP0, OUTPUT);
+    digitalWrite(I2C_SEGMENT_DISP0, LOW);
+ }
+ void loop ()
+ {
+      sevseg.setNumber(4999, 3);
+    sevseg.refreshDisplay();
+  byte temperature = 0;
+  byte humidity = 0;
+  int err = SimpleDHTErrSuccess;
+  if ((err = dht11.read(&temperature, &humidity, NULL)) != SimpleDHTErrSuccess) {
+   Serial.print("Read DHT11 failed, err="); Serial.println(err);delay(1000);
+   return;
+  }
+  Serial.print((int)temperature); Serial.print(" *C, ");
+  Serial.print((int)humidity); Serial.println(" H");
+  // DHT11 sampling rate is 1HZ.
+  delay(DHT_READ_TIME);
+ }
