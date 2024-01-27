@@ -1,4 +1,4 @@
-# PLANT_KERNEL
+# AUTOMATIC ESP32 IRRIGATION WORKER
 Called a "Plant Kernel", I built this project to manage and provide for the soil needs of a plant with moisture measured by a wired capacative moisture sensor and ESP32. a relay pumps the water downstream to keep the plant watered as needed, or at regular intervals.
 
  <h1> BUILD INSTRUCTIONS </h1> 
