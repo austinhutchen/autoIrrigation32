@@ -7,8 +7,14 @@ Called a "Plant Kernel", I built this project to manage and provide for the soil
  <ul>
    <li>
      -> Esp8266 or Esp32 microcontroller device with eeprom flash
+   </li>
+  <li>
      -> 3.3v ocotocoupled servo motor
+  </li>
+  <li>
      -> hydro pump
+  </li>
+  <li>
      -> Capacative or similar threshold moisture sensor
    </li>
 
