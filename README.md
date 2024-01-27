@@ -6,11 +6,10 @@ Called a "Plant Kernel", I built this project to manage and provide for the soil
  <b> PARTS LIST:</b>
  <ul>
    <li>
-     -> 
-      Esp8266 or Esp32 device
-      3.3v ocotocoupled servo motor
-      hydro pump
-      Capacative or similar threshold moisture sensor
+     -> Esp8266 or Esp32 microcontroller device with eeprom flash
+     -> 3.3v ocotocoupled servo motor
+     -> hydro pump
+     -> Capacative or similar threshold moisture sensor
    </li>
 
 
