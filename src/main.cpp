@@ -1,4 +1,3 @@
- // TECHATRONIC.COM
   // SimpleDHT LIBRARY LINK
   // https://github.com/winlinvip/SimpleDHT
   // Library SPI.h
