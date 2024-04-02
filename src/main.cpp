@@ -1,53 +1,25 @@
-  // SimpleDHT LIBRARY LINK
-  // https://github.com/winlinvip/SimpleDHT
-  // Library SPI.h
-  // https://github.com/PaulStoffregen/SPI
-  // Library Adafruit_GFX.h
-  // https://github.com/adafruit/Adafruit-GFX-Library
-  // Library Adafruit_SSD1306.h
-  // https://github.com/adafruit/Adafruit_SSD1306
- #include <SPI.h>
- #include <Wire.h>
-#include "SevSeg.h"
-SevSeg sevseg;
- byte numDigits = 4;
-  byte digitPins[] = {10, 11, 12, 13};
-  byte segmentPins[] = {9, 2, 3, 5, 6, 8, 7, 4};
+// Define the pins
+const int relayPin = 2; // Relay connected to digital pin 2
+const int sensorPin = A0; // Moisture Sensor in analog pin A0
 
-  bool resistorsOnSegments = true;
-  bool updateWithDelaysIn = true;
-  byte hardwareConfig = COMMON_CATHODE;
-  sevseg.begin(hardwareConfig, numDigits, digitPins, segmentPins, resistorsOnSegments);
-  sevseg.setBrightness(90);
- #include <SimpleDHT.h>
- //   for DHT11,
- //   VCC: 5V or 3V
- //   GND: GND
- //   DATA: 2
- int pinDHT11 = 3;
- SimpleDHT11 dht11(pinDHT11);
- #define I2C_SEGMENT_DISP0 7
- #define DHT_READ_TIME 1000
- void setup ()
- {
-   Serial.begin(9600);
-   Serial.println("TEMPERATURE AND HUMIDITY");
-    pinMode(I2C_SEGMENT_DISP0, OUTPUT);
-    digitalWrite(I2C_SEGMENT_DISP0, LOW);
- }
- void loop ()
- {
-      sevseg.setNumber(4999, 3);
-    sevseg.refreshDisplay();
-  byte temperature = 0;
-  byte humidity = 0;
-  int err = SimpleDHTErrSuccess;
-  if ((err = dht11.read(&temperature, &humidity, NULL)) != SimpleDHTErrSuccess) {
-   Serial.print("Read DHT11 failed, err="); Serial.println(err);delay(1000);
-   return;
+// Define the moisture threshold
+const int moistureThreshold = 300;
+
+void setup() {
+  pinMode(relayPin, OUTPUT); // Set the relay pin as output
+  digitalWrite(relayPin, HIGH); // Start with the water pump off
+}
+
+void loop() {
+  int moisture = analogRead(sensorPin); // Read the value from the moisture sensor
+
+  if(moisture < moistureThreshold) {
+    // If the moisture level is below the threshold, turn on the pump
+    digitalWrite(relayPin, LOW); // Turn ON the water pump
+  } else {
+    // If the moisture level is above the threshold, turn off the pump
+    digitalWrite(relayPin, HIGH); // Turn OFF the water pump
   }
-  Serial.print((int)temperature); Serial.print(" *C, ");
-  Serial.print((int)humidity); Serial.println(" H");
-  // DHT11 sampling rate is 1HZ.
-  delay(DHT_READ_TIME);
- }
+
+  delay(1000); // Wait for a second before next reading
+}
